@@ -1,0 +1,218 @@
+{{!-- demo/app/templates/contacts.hbs --}}
+<div class="d-flex">
+  <div class="contact-list-wrapper bg-white border {{if (starts-with this.router.currentRouteName "contacts.details") "collapsed" "expanded"}} shadow-lg rounded-4 d-flex flex-column" style="max-height: 100vh;">
+    <div class="d-flex flex-column px-4 py-3 border-bottom bg-light rounded-top-4 sticky-top">
+      <div class="d-flex justify-content-between align-items-center">
+        <div class="me-2">
+          <div class="dropdown rounded">
+            <button
+              class="btn btn-sm btn-outline-primary dropdown-toggle"
+              type="button"
+              id="sortFilterDropdown"
+              data-bs-toggle="dropdown"
+              data-bs-display="static"
+              aria-expanded="false"
+            >
+              Sort / Filter
+            </button>
+            <ul
+              class="dropdown-menu"
+              aria-labelledby="sortFilterDropdown"
+              style="min-width: 220px; z-index: 1055;"
+            >
+              <br><br>
+              <li class="dropdown-header">Sort</li>
+              <li>
+                <div class="px-3 py-1">
+                  <label class="form-label mb-1 small" for="sortFieldSelect">Field</label>
+                  <select
+                  id="sortFieldSelect"
+                  class="form-select form-select-sm mb-2"
+                  {{on "change" this.updateSort}}
+                  >
+                    {{#each (array "name" "phone" "email" "status") as |field|}}
+                      <option value={{field}} selected={{eq this.sort field}}>
+                        {{capitalize field}}
+                      </option>
+                    {{/each}}
+                  </select>
+                  <div class="btn-group w-100" role="group" aria-label="Sort direction">
+                    <button
+                      type="button"
+                      class="btn btn-sm {{if (eq this.dir "asc") "btn-primary" "btn-outline-primary"}}"
+                      {{on "click" (fn this.updateDir "asc")}}
+                    >
+                      Asc
+                    </button>
+                    <button
+                      type="button"
+                      class="btn btn-sm {{if (eq this.dir "desc") "btn-primary" "btn-outline-primary"}}"
+                      {{on "click" (fn this.updateDir "desc")}}
+                    >
+                      Desc
+                    </button>
+                  </div>
+                </div>
+              </li>
+              <li><hr class="dropdown-divider"></li>
+              <li class="dropdown-header">Filter</li>
+              <li>
+                <div class="px-3 py-1">
+                  <div class="btn-group w-100" role="group" aria-label="Filter contacts">
+                    {{#each (array "all" "active" "inactive") as |flt|}}
+                      <button
+                      type="button"
+                      class="btn btn-sm {{if (eq this.filter flt) "btn-primary" "btn-outline-primary"}}"
+                      {{on "click" (fn this.updateFilter flt)}}
+                      >
+                        {{capitalize flt}}
+                      </button>
+                    {{/each}}
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <h5 class="mb-0 fw-bold text-primary">
+          {{capitalize this.filter}} {{capitalize "Contacts"}}
+        </h5>
+        <div class="px-3 py-1"> 
+          <label for="perPageInput" class="form-label small me-2">Per Page :</label>
+          <input
+          type="number"
+          min="1"
+          max="100"
+          value={{this.per_page}}
+          id="perPageInput"
+          class="form-control form-control-sm text-center page-input"
+          style="width: 80px;"
+          {{on "change" this.changePerPage}}
+          />
+        </div>
+        <LinkTo @route="new" class="btn btn-sm btn-success shadow-sm">
+          <i class="bi bi-person-plus-fill me-1"></i> New
+        </LinkTo>
+      </div>
+    </div>
+
+    <div class="contact-list-scroll" style="flex:1; overflow-y:auto;">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-success sticky-top">
+          <tr>
+            <th>Name</th>
+            <th class="{{if (starts-with this.router.currentRouteName "contacts.details") "d-none"}}">Phone</th>
+            <th class="{{if (starts-with this.router.currentRouteName "contacts.details") "d-none"}}">Email</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each this.model as |contact|}}
+            <tr class="cursor-pointer {{if (eq contact.id this.selectedContact.id) "table-active border-primary" ""}}" {{on "click" (fn this.selectContact contact)}} style="transition: background 0.2s;">
+              <td class="fw-semibold">{{contact.name}}</td>
+              <td class="text-muted small {{if (starts-with this.router.currentRouteName "contacts.details") "d-none"}}">{{contact.phone}}</td>
+              <td class="text-muted small {{if (starts-with this.router.currentRouteName "contacts.details") "d-none"}}">{{contact.email}}</td>
+              <td>
+                <span class="badge {{if (eq contact.status "active") "bg-success" "bg-danger"}}">
+                  {{if (eq contact.status "active") "Active" "InActive"}}
+                </span>
+              </td>
+            </tr>
+          {{else}}
+            <tr>
+              <td colspan="4" class="text-center text-muted py-5">
+                <LinkTo @route="new" class="btn btn-sm btn-warning shadow-sm mt-3">
+                  Add<br>New Contact
+                </LinkTo>
+                <div class="mt-2">
+                  <span class="text-muted small">No contacts yet? Click above to add your first contact.</span>
+                </div>
+              </td>
+            </tr>
+          {{/each}}
+        </tbody>
+      </table>
+    </div>
+
+    <nav class="m-3">
+      <ul class="pagination justify-content-center mb-0">
+        <li class="page-item {{if (eq this.page 1) "disabled"}}">
+          <button class="page-link" {{on "click" this.prevPage}} aria-label="Previous">
+            <span aria-hidden="true">&laquo;</span>
+          </button>
+        </li>
+
+        {{!-- Show first page --}}
+        <li class="page-item {{if (eq this.page 1) "active"}}">
+          <button class="page-link" {{on "click" (fn this.goToPage 1)}}>1</button>
+        </li>
+
+        {{!-- Show ellipsis if needed --}}
+        {{#if (gt this.page 4)}}
+          <li class="page-item disabled"><span class="page-link">…</span></li>
+        {{/if}}
+
+        {{!-- Show up to 2 pages before current --}}
+        {{#each (range (max 2 (dec this.page 2)) (min (dec this.page) (dec this.totalPages))) as |p|}}
+          {{#if (and (gt p 1) (lt p this.totalPages))}}
+            <li class="page-item {{if (eq this.page p) "active"}}">
+              <button class="page-link" {{on "click" (fn this.goToPage p)}}>{{p}}</button>
+            </li>
+          {{/if}}
+        {{/each}}
+
+        {{!-- Show current page if not first or last --}}
+        {{#if (and (gt this.page 1) (lt this.page this.totalPages))}}
+          <li class="page-item active">
+            <button class="page-link" disabled>{{this.page}}</button>
+          </li>
+        {{/if}}
+
+        {{!-- Show up to 2 pages after current --}}
+        {{#each (range (inc this.page) (min (inc this.page 2) (dec this.totalPages))) as |p|}}
+          {{#if (and (gt p 1) (lt p this.totalPages))}}
+            <li class="page-item {{if (eq this.page p) "active"}}">
+              <button class="page-link" {{on "click" (fn this.goToPage p)}}>{{p}}</button>
+            </li>
+          {{/if}}
+        {{/each}}
+
+        {{!-- Show ellipsis if needed --}}
+        {{#if (lt this.page (dec this.totalPages 3))}}
+          <li class="page-item disabled"><span class="page-link">…</span></li>
+        {{/if}}
+
+        {{!-- Show last page if more than one --}}
+        {{#if (gt this.totalPages 1)}}
+          <li class="page-item {{if (eq this.page this.totalPages) "active"}}">
+            <button class="page-link" {{on "click" (fn this.goToPage this.totalPages)}}>{{this.totalPages}}</button>
+          </li>
+        {{/if}}
+
+        <li class="page-item {{if (eq this.page this.totalPages) "disabled"}}">
+          <button class="page-link" {{on "click" this.nextPage}} aria-label="Next">
+            <span aria-hidden="true">&raquo;</span>
+          </button>
+        </li>
+      </ul>
+
+      <div class="text-center text-muted small mt-2">
+        Page 
+        <input type="number" min=1 max={{this.totalPages}} value={{this.page}} class="form-control d-inline-block text-center page-input"
+          {{on "change" (fn this.changePageInput)}} />
+        of <span class="fw-semibold">{{this.totalPages}}</span>
+      </div>
+    </nav>
+  </div>
+  <div class="flex-grow-1 px-4">
+    {{outlet "details"}}
+  </div>
+</div>
+
+<style>
+.page-input {
+  width: 80px;
+  height: 2rem;
+  padding: 0 0.25rem;
+}
+</style>

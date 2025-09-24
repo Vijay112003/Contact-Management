@@ -1,0 +1,55 @@
+{{!-- demo/app/templates/dashboard.hbs --}}
+{{outlet}}
+
+<section class="dashboard-section py-5">
+  <h2 class="mb-5 text-primary fw-bold text-center">Dashboard</h2>
+
+  <div class="widgets row g-4 justify-content-center">
+    {{#each (array
+      (hash
+        route="contacts"
+        query=(hash sort="name" dir="asc" filter="all" page=1 perPage=20)
+        icon="bi-people"
+        color="primary"
+        bg="light"
+        label="Total Contacts"
+        value=this.model.total
+      )
+      (hash
+        route="contacts"
+        query=(hash sort="name" dir="asc" filter="active" page=1 perPage=20)
+        icon="bi-person-check"
+        color="success"
+        bg="success bg-opacity-10"
+        label="Active Contacts"
+        value=this.model.active
+      )
+      (hash
+        route="contacts"
+        query=(hash sort="name" dir="asc" filter="inactive" page=1 perPage=20)
+        icon="bi-person-x"
+        color="danger"
+        bg="danger bg-opacity-10"
+        label="Inactive Contacts"
+        value=this.model.inactive
+      )
+    ) as |widget|}}
+      <div class="col-12 col-md-4">
+        <LinkTo 
+          @route={{widget.route}} 
+          @query={{widget.query}}
+          class="card shadow-sm border-0 text-center dashboard-widget h-100 bg-{{widget.bg}} text-decoration-none">
+          <div class="card-body">
+            <div class="mb-3">
+              <span class="display-4 text-{{widget.color}}">
+                <i class="bi {{widget.icon}}"></i>
+              </span>
+            </div>
+            <h6 class="text-uppercase text-muted">{{widget.label}}</h6>
+            <h2 class="fw-bold mb-0">{{widget.value}}</h2>
+          </div>
+        </LinkTo>
+      </div>
+    {{/each}}
+  </div>
+</section>

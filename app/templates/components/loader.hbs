@@ -1,0 +1,15 @@
+{{!-- demo/app/templates/components/loader.hbs --}}
+{{yield}}
+<div class="status-container">
+  <div class="loader">
+    <svg width="100" height="100" viewBox="0 0 48 48">
+      {{#each (array 16 12 8 4) as |r idx|}}
+        <circle
+          class="loader-circle loader-circle-{{add idx 1}}"
+          cx="24" cy="24" r={{r}}
+        />
+      {{/each}}
+    </svg>
+    <p class="loader-text">Loading, please wait...</p>
+  </div>
+</div>

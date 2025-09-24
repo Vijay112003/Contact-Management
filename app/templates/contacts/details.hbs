@@ -1,0 +1,93 @@
+{{!-- demo/app/templates/contacts/details.hbs --}}
+{{#if this.hasError}}
+  <ErrorModel
+    @model={{this.errorModel}}
+    @onClose={{this.closeErrorModal}}
+    @onRedirect={{this.errorModel.onConfirm}}
+    @primaryActionText={{this.errorModel.primaryActionText}}
+  />
+{{/if}}
+
+<div class="rounded-4 shadow-lg bg-white p-4 position-relative" role="region" aria-label="Contact details">
+  {{#if this.isEditing}}
+    <ContactForm
+      @contact={{this.contact}}  {{!-- ✅ FIXED --}}
+      @onSave={{this.onEditForm}}
+      @onCancel={{this.onCloseForm}}
+      @onUpdateField={{this.updateField}}
+      @isNew={{this.isNew}}
+      @isSaving={{this.isSaving}}
+    />
+  {{else}}
+    <button
+      class="btn btn-sm btn-secondary position-absolute top-0 end-0 m-3"
+      type="button"
+      aria-label="Close details"
+      {{on "click" this.closeDetails}}
+    >
+      <i class="bi bi-x-lg"></i>
+      <span class="visually-hidden">Close</span>
+    </button>
+
+    {{#if this.model.id}}
+      <h4>
+        {{this.model.name}}
+        <span
+          class="badge {{if (eq this.model.status "active") "bg-success" "bg-danger"}} ms-2"
+          aria-label="Status: {{this.model.status}}"
+        >
+          {{if (eq this.model.status "active") "Active" "Inactive"}}
+        </span>
+      </h4>
+
+      <p><strong>Email:</strong> {{this.model.email}}</p>
+      <p><strong>Phone:</strong> {{this.model.phone}}</p>
+      <p><strong>Address:</strong> {{this.model.address}}</p>
+
+      <div class="mt-3">
+        <button
+          class="btn btn-primary me-2"
+          type="button"
+          aria-label="Edit contact"
+          {{on "click" this.editContact}}
+          disabled={{this.isSaving}}
+        >
+          Edit
+        </button>
+
+        <button
+          class="btn btn-danger"
+          type="button"
+          aria-label="Delete contact"
+          {{on "click" this.deleteContact}}
+          disabled={{this.isSaving}}
+        >
+          {{#if this.isSaving}}
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            <span class="visually-hidden">Deleting...</span>
+          {{else}}
+            Delete
+          {{/if}}
+        </button>
+
+        <button
+          type="button"
+          class="btn {{if (eq this.model.status "active") "btn-warning" "btn-success"}} ms-2"
+          aria-label="Toggle contact status"
+          {{on "click" (fn this.toggleActive this.model)}}
+          disabled={{this.isSettingActive}}
+        >
+          {{#if this.isSettingActive}}
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            <span class="visually-hidden">Updating status...</span>
+            Setting...
+          {{else}}
+            {{if (eq this.model.status "active") "Set Inactive" "Set Active"}}
+          {{/if}}
+        </button>
+      </div>
+    {{else}}
+      <div class="text-muted">No contact details available.</div>
+    {{/if}}
+  {{/if}}
+</div>

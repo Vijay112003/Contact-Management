@@ -1,0 +1,32 @@
+{{!-- demo/app/templates/components/error-model.hbs --}}
+<div class="modal-blur-overlay"></div>
+<div class="modal show d-block fade error-modal-bg" id="errorModal" tabindex="-1" aria-modal="true" role="dialog">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-danger shadow-lg">
+      <div class="modal-header bg-danger text-white">
+        <h5 class="modal-title d-flex align-items-center" id="errorModalLabel">
+          <svg width="24" height="24" fill="currentColor" class="me-2" viewBox="0 0 16 16"></svg>
+          Error
+        </h5>
+        <button type="button" class="btn-close btn-close-white me-2" aria-label="Close" title="Stay Here" data-bs-toggle="tooltip" data-bs-placement="left" {{on "click" @onClose}}></button>
+      </div>
+      <div class="modal-body">
+        {{yield}}
+        <div class="alert alert-danger d-flex align-items-center mt-2" role="alert">
+          <svg width="20" height="20" fill="currentColor" class="me-2" viewBox="0 0 16 16"></svg>
+          <div>
+            <strong>Code:</strong> {{@model.code}}<br>
+            <strong>Message:</strong> {{@model.message}}
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        {{#if @onRedirect}}
+          <button type="button" class="btn btn-primary" {{on "click" @onRedirect}}>
+            {{@primaryActionText}}
+          </button>
+        {{/if}}
+      </div>
+    </div>
+  </div>
+</div>

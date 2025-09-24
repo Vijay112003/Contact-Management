@@ -1,0 +1,80 @@
+<aside class="sidebar expanded">
+  <div class="sidebar-header d-flex align-items-center justify-content-between px-3 py-3 border-bottom border-secondary">
+    <h1 class="app-logo fw-bold text-primary m-0">Contacts</h1>
+  </div>
+
+  <nav class="flex-grow-1 overflow-auto mt-3">
+    <ul class="nav-links list-unstyled m-0 p-0">
+      {{#each navlinks as |link|}}
+        <li class="nav-item mb-1 position-relative {{if link.sublinks "has-sublinks"}}">
+          <LinkTo
+            @route={{link.route}}
+            @query={{link.params}}
+            class="nav-link d-flex align-items-center px-3 py-2 text-light"
+            @activeClass="active"
+          >
+            <span class="nav-icon fs-4 text-center icon-width">{{link.icon}}</span>
+            <span class="nav-label ms-2">{{link.label}}</span>
+            {{#if (eq link.route "contacts")}}
+              <span class="badge bg-secondary ms-auto">
+                {{this.contactCount.total}}
+              </span>
+            {{/if}}
+          </LinkTo>
+
+          {{#if link.sublinks}}
+            <ul class="sublinks list-unstyled mx-2 mt-1">
+              {{#each link.sublinks as |sublink|}}
+                <li class="nav-item position-relative">
+                  <LinkTo
+                    @route={{sublink.route}}
+                    @query={{sublink.params}}
+                    class="nav-link d-flex align-items-center mx-0 px-2 py-2 text-light sublink"
+                    @activeClass="active"
+                  >
+                    <span class="sublink-icon fs-5 text-center icon-width me-2">{{sublink.icon}}</span>
+                    <span class="sublink-label flex-grow-1">{{sublink.label}}</span>
+
+                    {{#if (eq sublink.label "Active Contacts")}}
+                      <span class="badge bg-success ms-auto">
+                        {{this.contactCount.active}}
+                      </span>
+                    {{/if}}
+
+                    {{#if (eq sublink.label "Inactive Contacts")}}
+                      <span class="badge bg-danger ms-auto">
+                        {{this.contactCount.inactive}}
+                      </span>
+                    {{/if}}
+                  </LinkTo>
+                </li>
+              {{/each}}
+            </ul>
+          {{/if}}
+        </li>
+      {{/each}}
+    </ul>
+  </nav>
+</aside>
+
+
+<style>
+
+.sublinks {
+  max-height: 0;
+  overflow: hidden;
+  background-color: #2c2f33;
+  border-left: 3px solid #7289da;
+  border-radius: 0 4px 4px 0;
+  transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), padding 0.4s;
+  padding-top: 0;
+  padding-bottom: 0;
+  width: 200px;
+}
+
+.has-sublinks:hover .sublinks {
+  max-height: 500px; /* Adjust as needed for content */
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+</style>

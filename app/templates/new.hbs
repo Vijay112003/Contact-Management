@@ -1,0 +1,114 @@
+{{#if this.hasError}}
+  <ErrorModel
+    @model={{this.errorModel}}
+    @onClose={{this.closeErrorModal}}
+    @onRedirect={{this.redirectErrorModel}}
+    @primaryActionText={{this.errorModel.primaryActionText}}
+  />
+{{/if}}
+
+<div class="card p-4">
+  <form {{on "submit" this.onSaveForm}}>
+    <h5 class="mb-3 text-center">
+      {{if this.isNew "Create New Contact" "Edit Contact"}}
+    </h5>
+
+    <button
+        class="btn btn-sm btn-secondary position-absolute top-0 end-0 m-3"
+        type="button"
+        aria-label="Close details"
+        {{on "click" this.onCloseForm}}
+      >
+      <i class="bi bi-x-lg"></i>
+      <span class="visually-hidden">Close</span>
+    </button>
+    
+
+    {{!-- Name --}}
+    <div class="form-floating mb-3">
+      <input
+        id="nameInput"
+        class="form-control {{if this.validationErrors.name "is-invalid"}}"
+        type="text"
+        placeholder="Name"
+        value={{this.contact.name}}
+        {{on "input" (fn this.updateField "name")}}
+      >
+      <label for="nameInput">Name</label>
+      {{#if this.validationErrors.name}}
+        <div class="invalid-feedback">
+          {{this.validationErrors.name}}
+        </div>
+      {{/if}}
+    </div>
+
+    {{!-- Email --}}
+    <div class="form-floating mb-3">
+      <input
+        id="emailInput"
+        class="form-control {{if this.validationErrors.email "is-invalid"}}"
+        type="email"
+        placeholder="Email"
+        value={{this.contact.email}}
+        {{on "input" (fn this.updateField "email")}}
+      >
+      <label for="emailInput">Email</label>
+      {{#if this.validationErrors.email}}
+        <div class="invalid-feedback">
+          {{this.validationErrors.email}}
+        </div>
+      {{/if}}
+    </div>
+
+    {{!-- Phone --}}
+    <div class="form-floating mb-3">
+      <input
+        id="phoneInput"
+        class="form-control {{if this.validationErrors.phone "is-invalid"}}"
+        type="tel"
+        placeholder="Phone"
+        value={{this.contact.phone}}
+        {{on "input" (fn this.updateField "phone")}}
+      >
+      <label for="phoneInput">Phone</label>
+      {{#if this.validationErrors.phone}}
+        <div class="invalid-feedback">
+          {{this.validationErrors.phone}}
+        </div>
+      {{/if}}
+    </div>
+
+    {{!-- Address --}}
+    <div class="form-floating mb-3">
+      <input
+        id="addressInput"
+        class="form-control {{if this.validationErrors.address "is-invalid"}}"
+        type="text"
+        placeholder="Address"
+        value={{this.contact.address}}
+        {{on "input" (fn this.updateField "address")}}
+      >
+      <label for="addressInput">Address</label>
+      {{#if this.validationErrors.address}}
+        <div class="invalid-feedback">
+          {{this.validationErrors.address}}
+        </div>
+      {{/if}}
+    </div>
+
+    <div class="d-flex justify-content-end">
+      <button
+        type="submit"
+        class="btn btn-primary"
+        disabled={{this.isSaving}}
+      >
+        {{#if this.isSaving}}
+          <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+          Saving...
+        {{else}}
+          {{if this.isNew "Create" "Save"}}
+        {{/if}}
+      </button>
+    </div>
+  </form>
+</div>

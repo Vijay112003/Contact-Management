@@ -1,0 +1,79 @@
+<form {{on "submit" @onSave}}>
+  <h5 class="mb-3 text-center">
+    {{if @isNew "Create New Contact" "Edit Contact"}}
+  </h5>
+
+  {{!-- Name Field --}}
+  <div class="form-floating mb-3">
+    <input
+      id="nameInput"
+      class="form-control"
+      type="text"
+      placeholder="Name"
+      value={{@contact.name}}
+      {{on "input" (fn @onUpdateField "name")}}
+    >
+    <label for="nameInput">Name</label>
+  </div>
+
+  {{!-- Email Field --}}
+  <div class="form-floating mb-3">
+    <input
+      id="emailInput"
+      class="form-control"
+      type="email"
+      placeholder="Email"
+      value={{@contact.email}}
+      {{on "input" (fn @onUpdateField "email")}}
+    >
+    <label for="emailInput">Email</label>
+  </div>
+
+  {{!-- Phone Field --}}
+  <div class="form-floating mb-3">
+    <input
+      id="phoneInput"
+      class="form-control"
+      type="tel"
+      placeholder="Phone"
+      value={{@contact.phone}}
+      {{on "input" (fn @onUpdateField "phone")}}
+    >
+    <label for="phoneInput">Phone</label>
+  </div>
+
+  {{!-- Address Field --}}
+  <div class="form-floating mb-3">
+    <input
+      id="addressInput"
+      class="form-control"
+      type="text"
+      placeholder="Address"
+      value={{@contact.address}}
+      {{on "input" (fn @onUpdateField "address")}}
+    >
+    <label for="addressInput">Address</label>
+  </div>
+
+  <div class="d-flex justify-content-end">
+    <button
+      type="button"
+      class="btn btn-outline-secondary me-2"
+      {{on "click" @onCancel}}
+    >
+      Cancel
+    </button>
+    <button
+      type="submit"
+      class="btn btn-primary"
+      disabled={{@isSaving}}
+    >
+      {{#if @isSaving}}
+        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+        Saving...
+      {{else}}
+        {{if @isNew "Create" "Save"}}
+      {{/if}}
+    </button>
+  </div>
+</form>
