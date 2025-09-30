@@ -79,16 +79,7 @@
         </h5>
         <div class="px-3 py-1"> 
           <label for="perPageInput" class="form-label small me-2">Per Page :</label>
-          <input
-          type="number"
-          min="1"
-          max="100"
-          value={{this.per_page}}
-          id="perPageInput"
-          class="form-control form-control-sm text-center page-input"
-          style="width: 80px;"
-          {{on "change" this.changePerPage}}
-          />
+          <input type="number" min="1" max="100" value={{this.per_page}} id="perPageInput" class="form-control form-control-sm text-center page-input" style="width: 80px;" {{on "change" this.changePerPage}} />
         </div>
         <LinkTo @route="new" class="btn btn-sm btn-success shadow-sm">
           <i class="bi bi-person-plus-fill me-1"></i> New
@@ -96,19 +87,19 @@
       </div>
     </div>
 
-    <div class="contact-list-scroll" style="flex:1; overflow-y:auto;">
+    <div class="contact-list-scroll">
       <table class="table table-hover align-middle mb-0">
         <thead class="table-success sticky-top">
           <tr>
             <th>Name</th>
-            <th class="{{if (starts-with this.router.currentRouteName "contacts.details") "d-none"}}">Phone</th>
-            <th class="{{if (starts-with this.router.currentRouteName "contacts.details") "d-none"}}">Email</th>
+            <th class={{if (starts-with this.router.currentRouteName "contacts.details") "d-none"}}>Phone</th>
+            <th class={{if (starts-with this.router.currentRouteName "contacts.details") "d-none"}}>Email</th>
             <th>Status</th>
           </tr>
         </thead>
         <tbody>
           {{#each this.model as |contact|}}
-            <tr class="cursor-pointer {{if (eq contact.id this.selectedContact.id) "table-active border-primary" ""}}" {{on "click" (fn this.selectContact contact)}} style="transition: background 0.2s;">
+            <tr class="cursor-pointer {{if (eq contact.id this.selectedContact.id) "table-active border-primary" ""}}" {{on "click" (fn this.selectContact contact)}}>
               <td class="fw-semibold">{{contact.name}}</td>
               <td class="text-muted small {{if (starts-with this.router.currentRouteName "contacts.details") "d-none"}}">{{contact.phone}}</td>
               <td class="text-muted small {{if (starts-with this.router.currentRouteName "contacts.details") "d-none"}}">{{contact.email}}</td>
@@ -132,77 +123,76 @@
           {{/each}}
         </tbody>
       </table>
+      <nav class="m-3">
+        <ul class="pagination justify-content-center mb-0">
+          <li class="page-item {{if (eq this.page 1) "disabled"}}">
+            <button class="page-link" {{on "click" this.prevPage}} aria-label="Previous">
+              <span aria-hidden="true">&laquo;</span>
+            </button>
+          </li>
+  
+          {{!-- Show first page --}}
+          <li class="page-item {{if (eq this.page 1) "active"}}">
+            <button class="page-link" {{on "click" (fn this.goToPage 1)}}>1</button>
+          </li>
+  
+          {{!-- Show ellipsis if needed --}}
+          {{#if (gt this.page 4)}}
+            <li class="page-item disabled"><span class="page-link">…</span></li>
+          {{/if}}
+  
+          {{!-- Show up to 2 pages before current --}}
+          {{#each (range (max 2 (dec this.page 2)) (min (dec this.page) (dec this.totalPages))) as |p|}}
+            {{#if (and (gt p 1) (lt p this.totalPages))}}
+              <li class="page-item {{if (eq this.page p) "active"}}">
+                <button class="page-link" {{on "click" (fn this.goToPage p)}}>{{p}}</button>
+              </li>
+            {{/if}}
+          {{/each}}
+  
+          {{!-- Show current page if not first or last --}}
+          {{#if (and (gt this.page 1) (lt this.page this.totalPages))}}
+            <li class="page-item active">
+              <button class="page-link" disabled>{{this.page}}</button>
+            </li>
+          {{/if}}
+  
+          {{!-- Show up to 2 pages after current --}}
+          {{#each (range (inc this.page) (min (inc this.page 2) (dec this.totalPages))) as |p|}}
+            {{#if (and (gt p 1) (lt p this.totalPages))}}
+              <li class="page-item {{if (eq this.page p) "active"}}">
+                <button class="page-link" {{on "click" (fn this.goToPage p)}}>{{p}}</button>
+              </li>
+            {{/if}}
+          {{/each}}
+  
+          {{!-- Show ellipsis if needed --}}
+          {{#if (lt this.page (dec this.totalPages 3))}}
+            <li class="page-item disabled"><span class="page-link">…</span></li>
+          {{/if}}
+  
+          {{!-- Show last page if more than one --}}
+          {{#if (gt this.totalPages 1)}}
+            <li class="page-item {{if (eq this.page this.totalPages) "active"}}">
+              <button class="page-link" {{on "click" (fn this.goToPage this.totalPages)}}>{{this.totalPages}}</button>
+            </li>
+          {{/if}}
+  
+          <li class="page-item {{if (eq this.page this.totalPages) "disabled"}}">
+            <button class="page-link" {{on "click" this.nextPage}} aria-label="Next">
+              <span aria-hidden="true">&raquo;</span>
+            </button>
+          </li>
+        </ul>
+  
+        <div class="text-center text-muted small mt-2">
+          Page 
+          <input type="number" min="1" max={{this.totalPages}} value={{this.page}} class="form-control d-inline-block text-center page-input"
+          {{on "change" (fn this.changePageInput)}}>
+          of <span class="fw-semibold">{{this.totalPages}}</span>
+        </div>
+      </nav>
     </div>
-
-    <nav class="m-3">
-      <ul class="pagination justify-content-center mb-0">
-        <li class="page-item {{if (eq this.page 1) "disabled"}}">
-          <button class="page-link" {{on "click" this.prevPage}} aria-label="Previous">
-            <span aria-hidden="true">&laquo;</span>
-          </button>
-        </li>
-
-        {{!-- Show first page --}}
-        <li class="page-item {{if (eq this.page 1) "active"}}">
-          <button class="page-link" {{on "click" (fn this.goToPage 1)}}>1</button>
-        </li>
-
-        {{!-- Show ellipsis if needed --}}
-        {{#if (gt this.page 4)}}
-          <li class="page-item disabled"><span class="page-link">…</span></li>
-        {{/if}}
-
-        {{!-- Show up to 2 pages before current --}}
-        {{#each (range (max 2 (dec this.page 2)) (min (dec this.page) (dec this.totalPages))) as |p|}}
-          {{#if (and (gt p 1) (lt p this.totalPages))}}
-            <li class="page-item {{if (eq this.page p) "active"}}">
-              <button class="page-link" {{on "click" (fn this.goToPage p)}}>{{p}}</button>
-            </li>
-          {{/if}}
-        {{/each}}
-
-        {{!-- Show current page if not first or last --}}
-        {{#if (and (gt this.page 1) (lt this.page this.totalPages))}}
-          <li class="page-item active">
-            <button class="page-link" disabled>{{this.page}}</button>
-          </li>
-        {{/if}}
-
-        {{!-- Show up to 2 pages after current --}}
-        {{#each (range (inc this.page) (min (inc this.page 2) (dec this.totalPages))) as |p|}}
-          {{#if (and (gt p 1) (lt p this.totalPages))}}
-            <li class="page-item {{if (eq this.page p) "active"}}">
-              <button class="page-link" {{on "click" (fn this.goToPage p)}}>{{p}}</button>
-            </li>
-          {{/if}}
-        {{/each}}
-
-        {{!-- Show ellipsis if needed --}}
-        {{#if (lt this.page (dec this.totalPages 3))}}
-          <li class="page-item disabled"><span class="page-link">…</span></li>
-        {{/if}}
-
-        {{!-- Show last page if more than one --}}
-        {{#if (gt this.totalPages 1)}}
-          <li class="page-item {{if (eq this.page this.totalPages) "active"}}">
-            <button class="page-link" {{on "click" (fn this.goToPage this.totalPages)}}>{{this.totalPages}}</button>
-          </li>
-        {{/if}}
-
-        <li class="page-item {{if (eq this.page this.totalPages) "disabled"}}">
-          <button class="page-link" {{on "click" this.nextPage}} aria-label="Next">
-            <span aria-hidden="true">&raquo;</span>
-          </button>
-        </li>
-      </ul>
-
-      <div class="text-center text-muted small mt-2">
-        Page 
-        <input type="number" min=1 max={{this.totalPages}} value={{this.page}} class="form-control d-inline-block text-center page-input"
-          {{on "change" (fn this.changePageInput)}} />
-        of <span class="fw-semibold">{{this.totalPages}}</span>
-      </div>
-    </nav>
   </div>
   <div class="flex-grow-1 px-4">
     {{outlet "details"}}

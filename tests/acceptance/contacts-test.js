@@ -1,14 +1,14 @@
 //demo/tests/acceptance/contacts-test.js
 import { module, test } from 'qunit';
 import { setupApplicationTest } from 'ember-qunit';
-import { setupMirage } from 'ember-cli-mirage/test-support';
+import { setupMirage } from 'miragejs-qunit';
 
-module('Acceptance | users', function (hooks) {
+module('Acceptance | contacts', function(hooks) {
   setupApplicationTest(hooks);
   setupMirage(hooks);
 
-  test('visiting /contacts', async function (assert) {
-    this.server.createList('contact', 5);
+  test('visiting /contacts', async function(assert) {
+    this.server.createList('contact', 3);
     await visit('/contacts');
     assert.equal(currentURL(), '/contacts');
   });

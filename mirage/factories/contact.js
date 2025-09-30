@@ -1,5 +1,5 @@
 // demo/mirage/factories/contact.js
-import { Factory } from 'ember-cli-mirage';
+import { Factory } from 'miragejs';
 export default Factory.extend({
   id(i) {
     const prefixes = ['9', '8', '7', '6'];

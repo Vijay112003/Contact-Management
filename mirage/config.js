@@ -1,4 +1,4 @@
-import { createServer, Response } from 'ember-cli-mirage';
+import { createServer, Response } from 'miragejs';
 
 export default function (config) {
   return createServer({

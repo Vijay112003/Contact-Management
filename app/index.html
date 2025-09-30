@@ -18,11 +18,10 @@
   </head>
   <body>
     <!-- {{content-for "body"}} -->
-    <div id="cart"></div>
-    <script src="{{rootURL}}assets/vendor.js"></script>
-    <script src="{{rootURL}}assets/demo.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.js"></script>
+    <script src="{{rootURL}}assets/vendor.js" onerror="console.error('Failed to load vendor.js');"></script>
+    <script src="{{rootURL}}assets/demo.js" onerror="console.error('Failed to load demo.js');"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" onerror="console.error('Failed to load Bootstrap JS');"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.js" onerror="console.error('Failed to load Bootstrap Icons JS because of network issues or the CDN is down');"></script>
     <!-- {{content-for "body-footer"}} -->
   </body>
 </html>

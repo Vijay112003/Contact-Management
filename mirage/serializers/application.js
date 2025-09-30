@@ -1,5 +1,5 @@
 // demo/mirage/serializers/application.js
-import { RestSerializer } from 'ember-cli-mirage';
+import { RestSerializer } from 'miragejs';
 export default class ApplicationSerializer extends RestSerializer {
   normalizeArrayResponse(store, primaryModelClass, payload, id, requestType) {
     if (payload && payload.meta) {
